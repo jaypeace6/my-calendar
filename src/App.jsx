@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./App.css";
 import axios from "axios";
 import Header from "./header";
 import Calendar from "./calendar";
@@ -7,9 +8,10 @@ const API_KEY = import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY;
 
 function App() {
   const [events, setEvents] = useState([]);
+  const [view, setView] = useState("dayGridMonth");
   const CALENDAR_ID = "en.usa#holiday@group.v.calendar.google.com";
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchEvents = async () => {
       try {
         const res = await axios.get(
@@ -37,10 +39,15 @@ function App() {
     alert("Submit Event clicked!");
   };
 
+  const handleViewChange = (newView) => {
+    setView(newView);
+  };
+
   return (
     <div style={{ padding: "20px" }}>
       <Header onSubmitEvent={handleSubmitEvent} /> {/* Pass the submit handler */}
-      <Calendar events={events} /> {/* Pass the events to the calendar */}
+
+      <Calendar events={events} view={view} onViewChange={handleViewChange} />
     </div>
   );
 }

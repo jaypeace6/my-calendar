@@ -1,8 +1,9 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 1rem;
+  text-align: left;
 }
 
 .logo {
@@ -39,4 +40,75 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Week-only (dayGridWeek) styles scoped to the calendar wrapper so month stays normal */
+.fc-wrapper.dayGridWeek .fc .fc-timegrid-axis,
+.fc-wrapper.dayGridWeek .fc .fc-timegrid-slot-label,
+.fc-wrapper.dayGridWeek .fc .fc-timegrid-divider,
+.fc-wrapper.dayGridWeek .fc .fc-timegrid-slot {
+  display: none !important;
+  border: none !important;
+}
+
+.fc-wrapper.dayGridWeek .fc .fc-timegrid-col {
+  background: transparent !important;
+}
+
+.fc-wrapper.dayGridWeek .fc-event {
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06) !important;
+  border-radius: 6px !important;
+}
+
+.fc-wrapper.dayGridWeek .fc .fc-scroller {
+  max-height: 800px;
+  overflow: auto;
+}
+
+.fc-wrapper.dayGridWeek .fc .fc-daygrid-day-top,
+.fc-wrapper.dayGridWeek .fc .fc-daygrid-day-events {
+  border: none !important;
+  padding: 0 !important;
+}
+
+.fc-wrapper.dayGridWeek .fc .fc-daygrid-day {
+  padding: 6px !important;
+}
+
+.fc-wrapper.dayGridWeek {
+  --day-header-height: 100px;
+}
+
+.fc-wrapper.dayGridWeek .fc .fc-col-header,
+.fc-wrapper.dayGridWeek .fc .fc-col-header-cell,
+.fc-wrapper.dayGridWeek .fc .fc-daygrid-day-top {
+  height: var(--day-header-height) !important;
+  min-height: var(--day-header-height) !important;
+}
+
+.fc-wrapper.dayGridWeek .fc .fc-daygrid-day-frame {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.fc-wrapper.dayGridWeek .fc .fc-daygrid-day-top {
+  flex: 0 0 var(--day-header-height) !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 6px !important;
+  box-sizing: border-box !important;
+}
+
+.fc-wrapper.dayGridWeek .fc .fc-daygrid-day-events {
+  flex: 0 0 calc(var(--day-header-height) * 4) !important;
+  max-height: calc(var(--day-header-height) * 4) !important;
+  overflow: auto !important;
+}
+
+/* Small spacing for event items inside the fixed area */
+.fc-wrapper.dayGridWeek .fc .fc-daygrid-event {
+  margin: 4px 0 !important;
 }
