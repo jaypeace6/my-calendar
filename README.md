@@ -38,6 +38,19 @@ cd my-calendar
 
 5. View the app running on http://localhost:5174/. Right now you should see a calendar with US public holidays calendar
 
+6. CTL + C to stop the process, localhost sould show not available.
+
+# Troubleshooting
+
+1. If you see localhost continue to run or not show updates, run
+` netstat -ano | findstr :5173 `
+
+
+2. Use the last column to replace all as '{EACH_PID}' including brackets below, until all are terminated:
+` taskkill /PID {EACH_PID} /F `
+
+3. You should see localhost show as unavailable.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

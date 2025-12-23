@@ -25,7 +25,9 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
+  flex-direction: column;  /* Add this to align content vertically */
+  justify-content: flex-start;  /* Align content to the top */
+  place-items: flex-start;  /* Make sure items align at the start */
   min-width: 320px;
   min-height: 100vh;
 }
