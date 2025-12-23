@@ -3,10 +3,10 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
 
+const API_KEY = import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY;
+
 function App() {
   const [events, setEvents] = useState([]);
-
-  const API_KEY = "AIzaSyBRwrVIXSQOoSrLYsBA1h_Fr2nqZunt2Wc";
   const CALENDAR_ID = "en.usa#holiday@group.v.calendar.google.com";
 
   useEffect(() => {
