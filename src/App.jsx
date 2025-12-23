@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
 import axios from "axios";
+import Header from "./header";
+import Calendar from "./calendar";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY;
 
@@ -9,7 +9,7 @@ function App() {
   const [events, setEvents] = useState([]);
   const CALENDAR_ID = "en.usa#holiday@group.v.calendar.google.com";
 
-  useEffect(() => {
+    useEffect(() => {
     const fetchEvents = async () => {
       try {
         const res = await axios.get(
@@ -32,15 +32,15 @@ function App() {
     fetchEvents();
   }, []);
 
+  const handleSubmitEvent = () => {
+    // Add logic for submitting an event
+    alert("Submit Event clicked!");
+  };
+
   return (
     <div style={{ padding: "20px" }}>
-      <h1>My Calendar</h1>
-      <FullCalendar
-        plugins={[dayGridPlugin]}
-        initialView="dayGridMonth"
-        events={events}
-        height="auto"
-      />
+      <Header onSubmitEvent={handleSubmitEvent} /> {/* Pass the submit handler */}
+      <Calendar events={events} /> {/* Pass the events to the calendar */}
     </div>
   );
 }
