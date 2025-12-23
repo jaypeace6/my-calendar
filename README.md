@@ -36,6 +36,8 @@ cd my-calendar
 4. Run the app 
 ` npm run dev `
 
+5. View the app running on http://localhost:5174/. Right now you should see a calendar with US public holidays calendar
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
