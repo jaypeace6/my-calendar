@@ -8,7 +8,7 @@ const API_KEY = import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY;
 
 function App() {
   const [events, setEvents] = useState([]);
-  const [view, setView] = useState("dayGridMonth");
+  const [view, setView] = useState("dayGridWeek");
   const CALENDAR_ID = "en.usa#holiday@group.v.calendar.google.com";
 
   useEffect(() => {

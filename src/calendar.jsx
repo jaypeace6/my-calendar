@@ -3,7 +3,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 
-const Calendar = ({ events, view = "dayGridMonth", onViewChange }) => {
+const Calendar = ({ events, view = "dayGridWeek", onViewChange }) => {
   const calendarRef = useRef(null);
 
   // When parent `view` prop changes, instruct FullCalendar to change view
@@ -21,12 +21,12 @@ const Calendar = ({ events, view = "dayGridMonth", onViewChange }) => {
         headerToolbar={{
           left: "prev,next today",
           center: "title",
-          right: "dayGridMonth,dayGridWeek",
+          right: "dayGridWeek,dayGridMonth",
         }}
         buttonText={{
           today: "Today",
-          month: "Month",
           week: "Week",
+          month: "Month",
         }}
         allDaySlot={false}
         events={events}
