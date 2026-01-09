@@ -6,6 +6,11 @@ import Calendar from "./calendar";
 
 const API_KEY = import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY;
 
+const CALENDAR_IDS = [
+  'en.usa#holiday@group.v.calendar.google.com', // US holidays
+  'dee75596aea9533d01629c0cfc3c9561723c5d0db26e671aa7370189f83e9aea@group.calendar.google.com' // My new calendar made
+];
+
 function App() {
   const [events, setEvents] = useState([]);
   const [view, setView] = useState("dayGridWeek");
@@ -14,20 +19,22 @@ function App() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get(
-          `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(
-            CALENDAR_ID
-          )}/events?key=${API_KEY}`
-        );
-        const items = res.data.items.map((item) => ({
-          title: item.summary,
-          start: item.start.date || item.start.dateTime,
-          end: item.end.date || item.end.dateTime,
-        }));
-        setEvents(items);
-        console.log("Events loaded!", items);
-      } catch (err) {
-        console.error("Failed to fetch events:", err);
+        const allEvents = [];
+        for (const id of CALENDAR_IDS) {
+          const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(id)}/events?key=${API_KEY}`);
+          const data = await response.json();
+          if (data.items) {
+            allEvents.push(...data.items.map(event => ({
+              title: event.summary,
+              start: event.start.dateTime || event.start.date,
+              end: event.end.dateTime || event.end.date,
+            })));
+          }
+        }
+        setEvents(allEvents);
+        console.log('Events loaded!');
+      } catch (error) {
+        console.error('Error fetching events:', error);
       }
     };
 
