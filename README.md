@@ -34,11 +34,15 @@ git config --global user.name "Your Name"
 ```
 
 4. Create API Key from Google then create .env file in project root
-  - Replace YOUR_API_KEY_HERE with a key from Google Cloud Console (https://console.cloud.google.com/) -> APIs and Services -> Credentails -> API key
   - (yes annoyingly will require getting a trial attached to a payment in case you run over usage)
+  - Navigate to Google Cloud Console (https://console.cloud.google.com/) -> APIs and Services -> Library. Search for Google Calendar and enable the API
+  - now navigate to Credentails -> API key and generate an API Key
+  - Under "API restrictions", select "Restrict key" and check "Google Calendar API".
+  - Under "Application restrictions", optionally restrict to websites (e.g., http://localhost:5173/* for local dev). Leave unrestricted for now.
+Click "Save".
   - Each dev needs their own API key in .env -- do not share key publicly
   - Note: works only with public Google Calendars until we implement OAuth.
-  - Add the API Key by adding this line to .env
+  - In .env file, add the following line, replacing 'YOUR_API_KEY_HERE' with the one you created
 `VITE_GOOGLE_CALENDAR_API_KEY=YOUR_API_KEY_HERE`
 
 5. Run the app 
@@ -46,7 +50,7 @@ git config --global user.name "Your Name"
 
 6. View the app running on http://localhost:5173/
   - You should also get a popup to confirm app is running and what port the app is running on. If you don't see a popup, check the terminal in the IDE).
-  - You should see a calendar, and if your api key was set correctly, you will see events pulled from the Google US Public Holidays calendar
+  - You should see a calendar, and if your api key was set correctly, you will see a US Holiday on it's appropriate date pulled from the Google US Public Holidays calendar
 
 7. CTL + C to stop the process, localhost sould show not available.
 
