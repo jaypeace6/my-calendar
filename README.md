@@ -1,4 +1,4 @@
-# My Calendar
+# XXX Dance Calendar
 A React + Vite app using FullCalendar to display events from public Google Calendars.
 
 ## Features
@@ -64,6 +64,18 @@ Click "Save".
 ` taskkill /PID {EACH_PID} /F `
 
 3. You should see localhost show as unavailable.
+
+# Database Access and Management
+
+- I've decided to use a Firebase Firestore Project, as it's free for small projects (up to 1 GB storage, 50k reads/day), scales well, and integrates easily with React. I have Sanity on the backburner as another free tier option that's more CMS based if it makes sense to use later.
+- I am working on a sample Firebase db in my personal space, but will create an official one to use and share with admins.
+
+1. In this project root folder, run
+` npm install firebase `
+
+2. 
+
+## Other Randomness
 
 # React + Vite
 
