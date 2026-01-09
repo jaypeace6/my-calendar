@@ -11,6 +11,8 @@ const CALENDAR_IDS = [
   'dee75596aea9533d01629c0cfc3c9561723c5d0db26e671aa7370189f83e9aea@group.calendar.google.com' // My new calendar made
 ];
 
+const MY_CALENDAR_ID = 'dee75596aea9533d01629c0cfc3c9561723c5d0db26e671aa7370189f83e9aea@group.calendar.google.com'; // Your calendar ID
+
 function App() {
   const [events, setEvents] = useState([]);
   const [view, setView] = useState("dayGridWeek");
@@ -52,7 +54,7 @@ function App() {
 
   return (
     <div style={{ padding: "20px" }}>
-      <Header onSubmitEvent={handleSubmitEvent} /> {/* Pass the submit handler */}
+      <Header onSubmitEvent={handleSubmitEvent} myCalendarId={MY_CALENDAR_ID} /> {/* Pass the calendar ID */}
 
       <Calendar events={events} view={view} onViewChange={handleViewChange} />
     </div>
