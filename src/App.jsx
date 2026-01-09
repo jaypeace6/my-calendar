@@ -5,6 +5,7 @@ import Header from "./header";
 import Calendar from "./calendar";
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY;
 
@@ -46,13 +47,53 @@ function App() {
         for (const id of CALENDAR_IDS) {
           const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(id)}/events?key=${API_KEY}`);
           const data = await response.json();
-          if (data.items) {
-            allEvents.push(...data.items.map(event => ({
-              title: event.summary,
-              start: event.start.dateTime || event.start.date,
-              end: event.end.dateTime || event.end.date,
-            })));
+          for (const item of data.items) {
+            const event = {
+              title: item.summary,
+              start: item.start.dateTime || item.start.date,
+              end: item.end.dateTime || item.end.date,
+              id: item.id,
+            };
+
+            // Parse firebaseId from description
+            const desc = item.description || '';
+            const firebaseIdMatch = desc.match(/firebaseId:\s*(\w+)/);
+            if (firebaseIdMatch) {
+              const firebaseId = firebaseIdMatch[1];
+              const docRef = doc(db, 'events', firebaseId);
+              const docSnap = await getDoc(docRef);
+              if (docSnap.exists()) {
+                event.extendedProps = docSnap.data(); // Attach extra data
+              }
+            }
+
+            allEvents.push(event);
           }
+          // option 2
+          // for (const calendarId of CALENDAR_IDS) {
+          //   const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?key=${API_KEY}`);
+          //   const data = await response.json();
+          //   if (data.items) {
+          //     for (const item of data.items) {
+          //       const event = {
+          //         title: item.summary,
+          //         start: item.start.dateTime || item.start.date,
+          //         end: item.end.dateTime || item.end.date,
+          //         id: item.id,
+          //       };
+
+          //       // Fetch extra data from Firestore using event ID
+          //       const docRef = doc(db, 'events', item.id);
+          //       const docSnap = await getDoc(docRef);
+          //       if (docSnap.exists()) {
+          //         event.extendedProps = docSnap.data();
+          //       }
+
+          //       allEvents.push(event);
+          //     }
+          //   }
+          // }
+          // console.log(allEvents);
         }
         setEvents(allEvents);
         console.log('Events loaded!');
@@ -79,14 +120,14 @@ function App() {
       <Header onSubmitEvent={handleSubmitEvent} myCalendarId={MY_CALENDAR_ID} /> {/* Pass the calendar ID */}
 
       <Calendar events={events} view={view} onViewChange={handleViewChange} />
-      
+
       <div style={{ marginTop: '40px', textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
-      <h2>XXX Dance Calendar – for dancers, by dancers. The most accurate latin dance calendar in St. Louis MO</h2>
-      <p>XXX is a community of passionate dancers. Every week we create the most accurate dance calendars for salsa dancing, bachata dancing, zouk dancing and kizomba dancing in the STL area. Then we go out and dance our asses off. Join us!</p>
-      <p style={{ backgroundColor: 'yellowgreen', color: 'white', padding: '10px', fontWeight: 'bold', display: 'inline-block', borderRadius: '5px' }}>
-        Events change daily. Check regularly or subscribe for updates
-      </p>
-    </div>
+        <h2>XXX Dance Calendar – for dancers, by dancers. The most accurate latin dance calendar in St. Louis MO</h2>
+        <p>XXX is a community of passionate dancers. Every week we create the most accurate dance calendars for salsa dancing, bachata dancing, zouk dancing and kizomba dancing in the STL area. Then we go out and dance our asses off. Join us!</p>
+        <p style={{ backgroundColor: 'yellowgreen', color: 'white', padding: '10px', fontWeight: 'bold', display: 'inline-block', borderRadius: '5px' }}>
+          Events change daily. Check regularly or subscribe for updates
+        </p>
+      </div>
     </div>
   );
 }
