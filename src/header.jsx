@@ -7,6 +7,10 @@ const Header = ({ onSubmitEvent, myCalendarId }) => {
     }
   };
 
+  const handleAbout = () => {
+    alert('This is a sample React app using FullCalendar to display events from public Google Calendars. We are working to add full basic functionality soon!');
+  };
+
   return (
     <div
       style={{
@@ -21,6 +25,20 @@ const Header = ({ onSubmitEvent, myCalendarId }) => {
 
       {/* Right side: Buttons */}
       <div style={{ display: "flex", gap: "10px" }}>
+        <button
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: "#6c757d",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+          onClick={handleAbout}
+        >
+          About
+        </button>
         <button
           style={{
             padding: "10px 20px",
