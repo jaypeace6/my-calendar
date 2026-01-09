@@ -25,7 +25,7 @@ cd my-calendar
 2. Install dependencies
 ` npm install `
 
-3. Ensure connection with GitHub so you can push/pull
+3. (May be needed) Introduce yourself with GitHub credentials so you can push/pull
 - I used VSCode, in which you will also need to run in the terminal:
 
 ```bash
