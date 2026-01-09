@@ -26,9 +26,9 @@ cd my-calendar
 ` npm install `
 
 3. Create API Key from Google then create .env file in project root
-- Replace YOUR_API_KEY_HERE with a key from Google Cloud -> APIs and Services -> Credentails -> API key
+- Replace YOUR_API_KEY_HERE with a key from Google Cloud Console (https://console.cloud.google.com/) -> APIs and Services -> Credentails -> API key
 - (yes annoyingly will require getting a trial attached to a payment in case you run over usage)
-- Each dev needs teir own API key in .env -- do not share key publicly
+- Each dev needs their own API key in .env -- do not share key publicly
 - Note: works only with public Google Calendars until we implement OAuth.
 - Add the API Key by adding this line to .env
 `VITE_GOOGLE_CALENDAR_API_KEY=YOUR_API_KEY_HERE`
@@ -36,7 +36,7 @@ cd my-calendar
 4. Run the app 
 ` npm run dev `
 
-5. View the app running on http://localhost:5174/. Right now you should see a calendar with US public holidays calendar
+5. View the app running on http://localhost:5173/. You should see a calendar, and if your api key was set correctly, you will see events pulled from the Google US Public Holidays calendar
 
 6. CTL + C to stop the process, localhost sould show not available.
 
