@@ -25,7 +25,15 @@ cd my-calendar
 2. Install dependencies
 ` npm install `
 
-3. Create API Key from Google then create .env file in project root
+3. Ensure connection with GitHub so you can push/pull
+- I used VSCode, in which you will also need to run in the terminal:
+
+```bash
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
+```
+
+4. Create API Key from Google then create .env file in project root
 - Replace YOUR_API_KEY_HERE with a key from Google Cloud Console (https://console.cloud.google.com/) -> APIs and Services -> Credentails -> API key
 - (yes annoyingly will require getting a trial attached to a payment in case you run over usage)
 - Each dev needs their own API key in .env -- do not share key publicly
@@ -33,12 +41,12 @@ cd my-calendar
 - Add the API Key by adding this line to .env
 `VITE_GOOGLE_CALENDAR_API_KEY=YOUR_API_KEY_HERE`
 
-4. Run the app 
+5. Run the app 
 ` npm run dev `
 
-5. View the app running on http://localhost:5173/. You should see a calendar, and if your api key was set correctly, you will see events pulled from the Google US Public Holidays calendar
+6. View the app running on http://localhost:5173/. You should see a calendar, and if your api key was set correctly, you will see events pulled from the Google US Public Holidays calendar
 
-6. CTL + C to stop the process, localhost sould show not available.
+7. CTL + C to stop the process, localhost sould show not available.
 
 # Troubleshooting
 
