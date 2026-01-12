@@ -47,56 +47,24 @@ function App() {
         for (const id of CALENDAR_IDS) {
           const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(id)}/events?key=${API_KEY}`);
           const data = await response.json();
-          for (const item of data.items) {
-            const event = {
-              title: item.summary,
-              start: item.start.dateTime || item.start.date,
-              end: item.end.dateTime || item.end.date,
-              id: item.id,
-            };
-
-            // Parse firebaseId from description
-            const desc = item.description || '';
-            const firebaseIdMatch = desc.match(/firebaseId:\s*(\w+)/);
-            if (firebaseIdMatch) {
-              const firebaseId = firebaseIdMatch[1];
-              const docRef = doc(db, 'events', firebaseId);
-              const docSnap = await getDoc(docRef);
-              if (docSnap.exists()) {
-                event.extendedProps = docSnap.data(); // Attach extra data
-              }
-            }
-
-            allEvents.push(event);
+          if (data.error) {
+            continue;
           }
-          // option 2
-          // for (const calendarId of CALENDAR_IDS) {
-          //   const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?key=${API_KEY}`);
-          //   const data = await response.json();
-          //   if (data.items) {
-          //     for (const item of data.items) {
-          //       const event = {
-          //         title: item.summary,
-          //         start: item.start.dateTime || item.start.date,
-          //         end: item.end.dateTime || item.end.date,
-          //         id: item.id,
-          //       };
+          if (data.items && data.items.length > 0) {
+            for (const item of data.items) {
+              const event = {
+                title: item.summary,
+                start: item.start.dateTime || item.start.date,
+                end: item.end.dateTime || item.end.date,
+                id: item.id,
+              };
 
-          //       // Fetch extra data from Firestore using event ID
-          //       const docRef = doc(db, 'events', item.id);
-          //       const docSnap = await getDoc(docRef);
-          //       if (docSnap.exists()) {
-          //         event.extendedProps = docSnap.data();
-          //       }
-
-          //       allEvents.push(event);
-          //     }
-          //   }
-          // }
-          // console.log(allEvents);
+              // Don't fetch Firestore here - do it on click instead
+              allEvents.push(event);
+            }
+          }
         }
         setEvents(allEvents);
-        console.log('Events loaded!');
       } catch (error) {
         console.error('Error fetching events:', error);
       }
@@ -119,7 +87,7 @@ function App() {
     <div style={{ padding: "20px" }}>
       <Header onSubmitEvent={handleSubmitEvent} myCalendarId={MY_CALENDAR_ID} /> {/* Pass the calendar ID */}
 
-      <Calendar events={events} view={view} onViewChange={handleViewChange} />
+      <Calendar events={events} view={view} onViewChange={handleViewChange} myCalendarId={MY_CALENDAR_ID} />
 
       <div style={{ marginTop: '40px', textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
         <h2>XXX Dance Calendar – for dancers, by dancers. The most accurate latin dance calendar in St. Louis MO</h2>

@@ -2,10 +2,27 @@ import React, { useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import { initializeApp } from 'firebase/app';
+import { getFirestore } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 
-const Calendar = ({ events, view = "dayGridWeek", onViewChange }) => {
+// Firebase config (same as App.jsx)
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const Calendar = ({ events, view = "dayGridWeek", onViewChange, myCalendarId }) => {
   const calendarRef = useRef(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [clickedEventId, setClickedEventId] = useState(null);
 
   // When parent `view` prop changes, instruct FullCalendar to change view
   useEffect(() => {
@@ -13,9 +30,56 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange }) => {
     if (calendarApi && view) calendarApi.changeView(view);
   }, [view]);
 
-  const handleEventClick = (info) => {
-    if (info.event.extendedProps) {
-      setSelectedEvent(info.event.extendedProps);
+  const handleEventClick = async (info) => {
+    setClickedEventId(info.event.id);
+    
+    // Start with Google Calendar data
+    const googleCalendarData = {
+      title: info.event.title,
+      start: info.event.start,
+      end: info.event.end,
+      _fromGoogle: true,
+    };
+
+    // Fetch from Firestore using event ID
+    const docRef = doc(db, 'events', info.event.id);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      const eventData = docSnap.data();
+      
+      // Fetch organizer data if organizer_id exists
+      let organizerData = null;
+      if (eventData.organizer_id) {
+        const organizerRef = doc(db, 'organizers', eventData.organizer_id);
+        const organizerSnap = await getDoc(organizerRef);
+        if (organizerSnap.exists()) {
+          const organizer = organizerSnap.data();
+          organizerData = {
+            name: `${organizer.first_name || ''} ${organizer.last_name || ''}`.trim(),
+            facebook_link: organizer.facebook_link,
+            instagram_link: organizer.instagram_link,
+            website_link: organizer.website_link,
+          };
+        }
+      }
+      
+      // Combine Google Calendar data with Firebase data
+      const combined = {
+        ...googleCalendarData,
+        ...eventData,
+        organizer_data: organizerData,
+        _noData: false,
+      };
+      console.log('Combined event data:', combined); // DEBUG
+      setSelectedEvent(combined);
+    } else {
+      // Only Google Calendar data available
+      console.log('Only Google Calendar data:', googleCalendarData); // DEBUG
+      setSelectedEvent({
+        ...googleCalendarData,
+        _noData: true,
+      });
     }
   };
 
@@ -53,16 +117,81 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange }) => {
       {selectedEvent && (
         <div style={{
           position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          background: 'white', padding: '20px', border: '1px solid black', zIndex: 1000
+          background: 'white', padding: '20px', border: '1px solid black', zIndex: 1000, maxWidth: '600px', overflowY: 'auto', maxHeight: '90vh'
         }}>
-          <h2>{selectedEvent.name}</h2>
-          <p><strong>Description:</strong> {selectedEvent.description}</p>
-          <p><strong>Date:</strong> {selectedEvent.date}</p>
-          <p><strong>Time:</strong> {selectedEvent.time}</p>
-          <p><strong>Type:</strong> {selectedEvent.type}</p>
-          <p><strong>Instagram:</strong> <a href={selectedEvent.instagramLink} target="_blank">Link</a></p>
-          <p><strong>Flyer:</strong> <img src={selectedEvent.flyer} alt="Flyer" style={{ maxWidth: '200px' }} /></p>
-          <button onClick={closeModal}>Close</button>
+          <h2>{selectedEvent.title}</h2>
+          
+          {/* Google Calendar Data */}
+          <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #eee' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '10px' }}>Event Details</h3>
+            {selectedEvent.start && (
+              <p>
+                <strong>Date:</strong> {new Date(selectedEvent.start).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+              </p>
+            )}
+            {selectedEvent.start && selectedEvent.end && (
+              <p>
+                <strong>Time:</strong> {new Date(selectedEvent.start).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })} - {new Date(selectedEvent.end).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+              </p>
+            )}
+          </div>
+
+          {/* Firebase Data */}
+          {!selectedEvent._noData && (
+            <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #eee' }}>
+              <h3 style={{ marginTop: 0, marginBottom: '10px' }}>Additional Information</h3>
+              
+              {selectedEvent.flyer_link && (
+                <p style={{ marginTop: '15px' }}>
+                  <strong>Flyer:</strong><br />
+                  <img src={selectedEvent.flyer_link} alt="Flyer" style={{ maxWidth: '100%', marginTop: '10px' }} />
+                </p>
+              )}
+
+              {selectedEvent.description && (
+                <p><strong>Description:</strong> {selectedEvent.description}</p>
+              )}
+              
+              {selectedEvent.event_type && (
+                <p><strong>Event Type:</strong> {selectedEvent.event_type}</p>
+              )}
+
+              {selectedEvent.price && (
+                <p><strong>Price:</strong> {selectedEvent.price}</p>
+              )}
+
+              {selectedEvent.organizer_data && (
+                <div style={{ marginTop: '15px', paddingTop: '15px', borderTop: '1px solid #eee' }}>
+                  <h4 style={{ marginTop: 0, marginBottom: '10px' }}>Organizer</h4>
+                  <p><strong>Name:</strong> {selectedEvent.organizer_data.name}</p>
+                  
+                  {selectedEvent.organizer_data.facebook_link && (
+                    <p><strong>Facebook:</strong> <a href={selectedEvent.organizer_data.facebook_link} target="_blank" rel="noopener noreferrer">{selectedEvent.organizer_data.facebook_link}</a></p>
+                  )}
+                  
+                  {selectedEvent.organizer_data.instagram_link && (
+                    <p><strong>Instagram:</strong> <a href={selectedEvent.organizer_data.instagram_link} target="_blank" rel="noopener noreferrer">{selectedEvent.organizer_data.instagram_link}</a></p>
+                  )}
+                  
+                  {selectedEvent.organizer_data.website_link && (
+                    <p><strong>Website:</strong> <a href={selectedEvent.organizer_data.website_link} target="_blank" rel="noopener noreferrer">{selectedEvent.organizer_data.website_link}</a></p>
+                  )}
+                </div>
+              )}
+            
+            </div>
+          )}
+
+          {/* No Firebase Data Message */}
+          {selectedEvent._noData && (
+            <div style={{ marginTop: '15px', padding: '10px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
+              <p style={{ color: '#666', marginBottom: '10px' }}>No additional event details found in the database.</p>
+              <p><strong>Event ID:</strong> <code style={{ backgroundColor: '#f0f0f0', padding: '5px', fontSize: '12px' }}>{clickedEventId}</code></p>
+              <p style={{ fontSize: '12px', color: '#999' }}>To add details (flyer, social media links, etc.), create a Firestore document in the 'events' collection using this ID.</p>
+            </div>
+          )}
+
+          <button onClick={closeModal} style={{ marginTop: '15px', padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Close</button>
         </div>
       )}
     </div>
