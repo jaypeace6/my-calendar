@@ -23,6 +23,7 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange, myCalendarId }) 
   const calendarRef = useRef(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [clickedEventId, setClickedEventId] = useState(null);
+  const [expandedFlyer, setExpandedFlyer] = useState(false);
 
   // When parent `view` prop changes, instruct FullCalendar to change view
   useEffect(() => {
@@ -83,7 +84,10 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange, myCalendarId }) 
     }
   };
 
-  const closeModal = () => setSelectedEvent(null);
+  const closeModal = () => {
+    setSelectedEvent(null);
+    setExpandedFlyer(false);
+  };
 
   return (
     <div className={`fc-wrapper ${view}`}>
@@ -142,10 +146,44 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange, myCalendarId }) 
               <h3 style={{ marginTop: 0, marginBottom: '10px' }}>Additional Information</h3>
               
               {selectedEvent.flyer_link && (
-                <p style={{ marginTop: '15px' }}>
+                <div style={{ marginTop: '15px' }}>
                   <strong>Flyer:</strong><br />
-                  <img src={selectedEvent.flyer_link} alt="Flyer" style={{ maxWidth: '100%', marginTop: '10px' }} />
-                </p>
+                  <div 
+                    onClick={() => setExpandedFlyer(true)}
+                    style={{ 
+                      marginTop: '10px', 
+                      width: '100%', 
+                      height: '200px', 
+                      overflow: 'hidden', 
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      position: 'relative',
+                      border: '1px solid #ddd'
+                    }}
+                  >
+                    <img 
+                      src={selectedEvent.flyer_link} 
+                      alt="Flyer Preview" 
+                      style={{ 
+                        width: '100%', 
+                        height: '100%', 
+                        objectFit: 'cover'
+                      }} 
+                    />
+                    <div style={{
+                      position: 'absolute',
+                      bottom: '10px',
+                      right: '10px',
+                      backgroundColor: 'rgba(0,0,0,0.7)',
+                      color: 'white',
+                      padding: '5px 10px',
+                      borderRadius: '4px',
+                      fontSize: '12px'
+                    }}>
+                      Click to expand
+                    </div>
+                  </div>
+                </div>
               )}
 
               {selectedEvent.description && (
@@ -192,6 +230,57 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange, myCalendarId }) 
           )}
 
           <button onClick={closeModal} style={{ marginTop: '15px', padding: '10px 20px', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Close</button>
+        </div>
+      )}
+
+      {/* Expanded Flyer Modal */}
+      {expandedFlyer && selectedEvent?.flyer_link && (
+        <div 
+          onClick={() => setExpandedFlyer(false)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            zIndex: 2000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            cursor: 'pointer'
+          }}
+        >
+          <div style={{ position: 'relative', maxWidth: '90%', maxHeight: '90%' }}>
+            <img 
+              src={selectedEvent.flyer_link} 
+              alt="Flyer Full Size" 
+              style={{ 
+                maxWidth: '100%', 
+                maxHeight: '90vh',
+                objectFit: 'contain'
+              }} 
+            />
+            <button 
+              onClick={() => setExpandedFlyer(false)}
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '10px',
+                backgroundColor: 'white',
+                border: 'none',
+                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                fontSize: '24px',
+                cursor: 'pointer',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
+              }}
+            >
+              ×
+            </button>
+          </div>
         </div>
       )}
     </div>

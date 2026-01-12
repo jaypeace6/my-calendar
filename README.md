@@ -15,14 +15,14 @@ A React + Vite app using FullCalendar to display events from public Google Calen
 
 ## Setup
 
-1. **Clone the repository**
+1. [One-Time Only] **Clone the repository**
 
 ```bash
 git clone https://github.com/your-username/my-calendar.git
 cd my-calendar
 ```
 
-2. Install dependencies
+2. [One-Time Only] Install dependencies
 ` npm install `
 
 3. (May be needed) Introduce yourself with GitHub credentials so you can push/pull
@@ -70,10 +70,21 @@ Click "Save".
 - I've decided to use a Firebase Firestore Project, as it's free for small projects (up to 1 GB storage, 50k reads/day), scales well, and integrates easily with React. I have Sanity on the backburner as another free tier option that's more CMS based if it makes sense to use later.
 - I am working on a sample Firebase db in my personal space, but will create an official one to use and share with admins.
 
-1. In this project root folder, run
+1. [One-Time Only] In this project root folder, run
 ` npm install firebase `
 
-2. 
+2. You should see a sample event from 1/9 linked to a Firebase event instance
+  - Events in calendar view will pull directly from Google Calendar
+  - Events in pop-up view (click on one event) will pull from Google Calendar + Firebase
+
+3. To connect a new event with Firebase:
+    - a) add the event as a Google Calendar event
+    - b) look at the event on the website, when you click on it a popup will give you the eventId (will change to be in console log and just show "details not found")
+    - c) in Firebase, create the event details. Include the following:
+        - add or locate organizer_id (includes first_name, last_name, facebook_link, instagram_link, website_link)
+        - eventId, eventType, flyer_link, organizer, price, primaryKeyName, title, organizer_id, price
+    - note: for now, flyer_link is generated with imgur -> right click "Open image in a new tab" -> copy URL
+
 
 ## Other Randomness
 
