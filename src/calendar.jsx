@@ -225,7 +225,6 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange, myCalendarId }) 
             <div style={{ marginTop: '15px', padding: '10px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
               <p style={{ color: '#666', marginBottom: '10px' }}>No additional event details found in the database.</p>
               <p><strong>Event ID:</strong> <code style={{ backgroundColor: '#f0f0f0', padding: '5px', fontSize: '12px' }}>{clickedEventId}</code></p>
-              <p style={{ fontSize: '12px', color: '#999' }}>To add details (flyer, social media links, etc.), create a Firestore document in the 'events' collection using this ID.</p>
             </div>
           )}
 
