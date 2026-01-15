@@ -21,7 +21,7 @@ const Header = ({ onSubmitEvent, myCalendarId }) => {
       }}
     >
       {/* Left side: Calendar Name */}
-      <h1 style={{ margin: 0 }}>XXX Dance Calendar</h1>
+      <h1 style={{ margin: 0 }}>STL Afro-Latin Dance Calendar</h1>
 
       {/* Right side: Buttons */}
       <div style={{ display: "flex", gap: "10px" }}>

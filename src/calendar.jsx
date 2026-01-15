@@ -4,7 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 
 // Firebase config (same as App.jsx)
 const firebaseConfig = {
@@ -42,12 +42,12 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange, myCalendarId }) 
       _fromGoogle: true,
     };
 
-    // Fetch from Firestore using event ID
-    const docRef = doc(db, 'events', info.event.id);
-    const docSnap = await getDoc(docRef);
+    // Fetch from Firestore using google_calendar_id field
+    const q = query(collection(db, 'events'), where('google_calendar_id', '==', info.event.id));
+    const querySnapshot = await getDocs(q);
     
-    if (docSnap.exists()) {
-      const eventData = docSnap.data();
+    if (!querySnapshot.empty) {
+      const eventData = querySnapshot.docs[0].data();
       
       // Fetch organizer data if organizer_id exists
       let organizerData = null;
