@@ -83,18 +83,20 @@ function App() {
   };
 
   // This is the main render
+  // For playing w color: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/named-color
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", backgroundColor: "#02008f", minHeight: "100vh" }}>
       <Header onSubmitEvent={handleSubmitEvent} myCalendarId={MY_CALENDAR_ID} /> {/* Pass the calendar ID */}
 
-      <Calendar events={events} view={view} onViewChange={handleViewChange} myCalendarId={MY_CALENDAR_ID} />
+      <div style={{ backgroundColor: "white", padding: "20px", borderRadius: "8px", marginBottom: "20px" }}>
+        <Calendar events={events} view={view} onViewChange={handleViewChange} myCalendarId={MY_CALENDAR_ID} />
+      </div>
 
-      <div style={{ marginTop: '40px', textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
+      <div style={{ marginTop: '40px', textAlign: 'center', fontFamily: 'Arial, sans-serif', color: 'white' }}>
         <h2>STL Afro-Latin Dance Calendar – for dancers, by dancers. The most accurate latin dance calendar in St. Louis MO</h2>
-        <p>We’re a community of passionate dancers, updating the calendar every week with all the deets you need to find public classes, socials, and other events across the St. Louis Afro‑Latin dance scene. Check out what’s happening and be part of the rhythm.</p>
-        <p style={{ backgroundColor: 'slateblue', color: 'white', padding: '10px', fontWeight: 'bold', display: 'inline-block', borderRadius: '5px' }}>
-          To learn more or request to add your event, explore our subpages.
-        </p>
+        <p>We're a community of passionate dancers, updating the calendar every week with all the deets you need to find public classes, socials, and other events across the St. Louis Afro‑Latin dance scene. Check out what's happening and be part of the rhythm!</p>
+
+        <p>To learn more or request to add your event, explore our subpages.</p>
       </div>
     </div>
   );
