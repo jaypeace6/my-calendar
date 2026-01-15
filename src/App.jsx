@@ -90,10 +90,10 @@ function App() {
       <Calendar events={events} view={view} onViewChange={handleViewChange} myCalendarId={MY_CALENDAR_ID} />
 
       <div style={{ marginTop: '40px', textAlign: 'center', fontFamily: 'Arial, sans-serif' }}>
-        <h2>XXX Dance Calendar – for dancers, by dancers. The most accurate latin dance calendar in St. Louis MO</h2>
-        <p>XXX is a community of passionate dancers. Every week we create the most accurate dance calendars for salsa dancing, bachata dancing, zouk dancing and kizomba dancing in the STL area. Then we go out and dance our asses off. Join us!</p>
-        <p style={{ backgroundColor: 'yellowgreen', color: 'white', padding: '10px', fontWeight: 'bold', display: 'inline-block', borderRadius: '5px' }}>
-          Events change daily. Check regularly or subscribe for updates
+        <h2>STL Afro-Latin Dance Calendar – for dancers, by dancers. The most accurate latin dance calendar in St. Louis MO</h2>
+        <p>We’re a community of passionate dancers, updating the calendar every week with all the deets you need to find public classes, socials, and other events across the St. Louis Afro‑Latin dance scene. Check out what’s happening and be part of the rhythm.</p>
+        <p style={{ backgroundColor: 'slateblue', color: 'white', padding: '10px', fontWeight: 'bold', display: 'inline-block', borderRadius: '5px' }}>
+          To learn more or request to add your event, explore our subpages.
         </p>
       </div>
     </div>
