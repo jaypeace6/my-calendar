@@ -1,5 +1,5 @@
 import React from "react";
-import danceLogo from "../dance_logo.png";
+import danceLogo from "../calendar_logo.png";
 
 const Header = ({ onSubmitEvent, myCalendarId }) => {
   const handleAddToCalendar = () => {
@@ -17,12 +17,12 @@ const Header = ({ onSubmitEvent, myCalendarId }) => {
       style={{
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "flex-end",
         marginBottom: "20px",
       }}
     >
       {/* Left side: Logo */}
-      <img src={danceLogo} alt="Dance Calendar Logo" style={{ height: "120px", margin: 0 }} />
+      <img src={danceLogo} alt="Dance Calendar Logo" style={{ height: "160px", margin: 0 }} />
 
       {/* Right side: Buttons */}
       <div style={{ display: "flex", gap: "10px" }}>

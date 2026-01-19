@@ -4,8 +4,7 @@ import axios from "axios";
 import Header from "./header";
 import Calendar from "./calendar";
 import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { doc, getDoc } from 'firebase/firestore';
+import { getFirestore, collection, onSnapshot } from 'firebase/firestore';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY;
 
@@ -38,6 +37,8 @@ const db = getFirestore(app);
 function App() {
   const [events, setEvents] = useState([]);
   const [view, setView] = useState("dayGridWeek");
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const CALENDAR_ID = "en.usa#holiday@group.v.calendar.google.com";
 
   useEffect(() => {
@@ -71,7 +72,23 @@ function App() {
     };
 
     fetchEvents();
-  }, []);
+
+    // Listen to Firebase events collection for changes (not initial load)
+    const eventsRef = collection(db, 'events');
+    const unsubscribe = onSnapshot(eventsRef, (snapshot) => {
+      // Skip the initial snapshot load
+      if (isInitialLoad) {
+        setIsInitialLoad(false);
+        return;
+      }
+      // Update lastUpdated only when events actually change
+      setLastUpdated(new Date());
+    }, (error) => {
+      console.log('Firebase listener error:', error);
+    });
+
+    return () => unsubscribe();
+  }, [isInitialLoad]);
 
   const handleSubmitEvent = () => {
     // Add logic for submitting an event
@@ -92,11 +109,17 @@ function App() {
         <Calendar events={events} view={view} onViewChange={handleViewChange} myCalendarId={MY_CALENDAR_ID} />
       </div>
 
-      <div style={{ marginTop: '40px', textAlign: 'center', fontFamily: 'Arial, sans-serif', color: 'white' }}>
+      <div style={{ marginTop: '40px', textAlign: 'center', fontFamily: 'Arial, sans-serif', color: '#ffd675' }}>
         <h2>STL Afro-Latin Dance Calendar – for dancers, by dancers. The most accurate latin dance calendar in St. Louis MO</h2>
         <p>We're a community of passionate dancers, updating the calendar every week with all the deets you need to find public classes, socials, and other events across the St. Louis Afro‑Latin dance scene. Check out what's happening and be part of the rhythm!</p>
 
         <p>To learn more or request to add your event, explore our subpages.</p>
+        <p>Est. 2026</p>
+        {lastUpdated && (
+          <p style={{ fontSize: '12px', color: '#999', marginTop: '10px' }}>
+            Last updated: {lastUpdated.toLocaleString()}
+          </p>
+        )} 
       </div>
     </div>
   );
