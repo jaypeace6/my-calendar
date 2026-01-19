@@ -102,11 +102,13 @@ function App() {
   // This is the main render
   // For playing w color: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/named-color
   return (
-    <div style={{ padding: "20px", backgroundColor: "#02008f", minHeight: "100vh" }}>
+    <div style={{ padding: "20px", backgroundColor: "#02008f", minHeight: "100vh", overflow: "hidden" }}>
       <Header onSubmitEvent={handleSubmitEvent} myCalendarId={MY_CALENDAR_ID} /> {/* Pass the calendar ID */}
 
-      <div style={{ backgroundColor: "white", padding: "20px", borderRadius: "8px", marginBottom: "20px" }}>
-        <Calendar events={events} view={view} onViewChange={handleViewChange} myCalendarId={MY_CALENDAR_ID} />
+      <div style={{ backgroundColor: "white", padding: "20px", borderRadius: "8px", marginBottom: "20px", overflow: "hidden" }}>
+        <div style={{ width: "100%", overflow: "hidden" }}>
+          <Calendar events={events} view={view} onViewChange={handleViewChange} myCalendarId={MY_CALENDAR_ID} />
+        </div>
       </div>
 
       <div style={{ marginTop: '40px', textAlign: 'center', fontFamily: 'Arial, sans-serif', color: '#ffd675' }}>

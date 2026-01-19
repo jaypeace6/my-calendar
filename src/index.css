@@ -24,6 +24,7 @@ a:hover {
 
 body {
   margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;  /* Add this to align content vertically */
   justify-content: flex-start;  /* Align content to the top */

@@ -18,16 +18,26 @@ const Header = ({ onSubmitEvent, myCalendarId }) => {
     <div
       style={{
         display: "flex",
-        justifyContent: "space-between",
-        alignItems: "flex-end",
+        flexDirection: "column",
+        gap: "15px",
         marginBottom: "20px",
       }}
     >
-      {/* Left side: Logo */}
-      <img src={danceLogo} alt="Dance Calendar Logo" style={{ height: "160px", margin: 0 }} />
+      {/* Top row: Logo and Buttons */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+          gap: "15px",
+        }}
+      >
+        {/* Left side: Logo */}
+        <img src={danceLogo} alt="Dance Calendar Logo" style={{ height: "clamp(80px, 20vw, 160px)", margin: 0 }} />
 
-      {/* Right side: Buttons */}
-      <div style={{ display: "flex", gap: "10px" }}>
+        {/* Right side: Buttons */}
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", justifyContent: "flex-end" }}>
         <button
           style={{
             padding: "10px 20px",
@@ -70,6 +80,7 @@ const Header = ({ onSubmitEvent, myCalendarId }) => {
         >
           Submit an Event
         </button>
+        </div>
       </div>
 
       {/* About Modal */}
