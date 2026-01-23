@@ -1,4 +1,4 @@
-# XXX Dance Calendar
+# STL Afro-Latin Dance Calendar
 A React + Vite app using FullCalendar to display events from public Google Calendars.
 
 ## Features
@@ -24,6 +24,8 @@ cd my-calendar
 
 2. [One-Time Only] Install dependencies
 ` npm install `
+` npm install firebase `
+` npm install @fullcalendar/list `
 
 3. (May be needed) Introduce yourself with GitHub credentials so you can push/pull
 - I used VSCode, in which you will also need to run in the terminal:
@@ -70,7 +72,7 @@ Click "Save".
 - I've decided to use a Firebase Firestore Project, as it's free for small projects (up to 1 GB storage, 50k reads/day), scales well, and integrates easily with React. I have Sanity on the backburner as another free tier option that's more CMS based if it makes sense to use later.
 - I am working on a sample Firebase db in my personal space, but will create an official one to use and share with admins.
 
-1. [One-Time Only] In this project root folder, run
+1. If you have not yet done so from the instructions above, in this project root folder, run
 ` npm install firebase `
 
 2. You should see a sample event from 1/9 linked to a Firebase event instance

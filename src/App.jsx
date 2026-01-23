@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./App.css";
 import axios from "axios";
 import Header from "./header";
 import Calendar from "./calendar";
+import Filter from "./filter";
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, onSnapshot } from 'firebase/firestore';
+import { getFirestore, collection, onSnapshot, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY;
 
@@ -38,7 +39,11 @@ function App() {
   const [events, setEvents] = useState([]);
   const [view, setView] = useState("dayGridWeek");
   const [lastUpdated, setLastUpdated] = useState(null);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [selectedFilters, setSelectedFilters] = useState({
+    eventType: [],
+    danceStyle: [],
+  });
+  const isInitialLoadRef = useRef(true);
   const CALENDAR_ID = "en.usa#holiday@group.v.calendar.google.com";
 
   useEffect(() => {
@@ -73,22 +78,52 @@ function App() {
 
     fetchEvents();
 
-    // Listen to Firebase events collection for changes (not initial load)
-    const eventsRef = collection(db, 'events');
-    const unsubscribe = onSnapshot(eventsRef, (snapshot) => {
-      // Skip the initial snapshot load
-      if (isInitialLoad) {
-        setIsInitialLoad(false);
-        return;
+    // Fetch initial metadata on load
+    const fetchMetadata = async () => {
+      try {
+        const metadataDoc = await getDoc(doc(db, 'metadata', 'lastUpdate'));
+        if (metadataDoc.exists()) {
+          const timestamp = metadataDoc.data().timestamp;
+          setLastUpdated(new Date(timestamp));
+        }
+      } catch (error) {
+        console.error('Error fetching metadata:', error);
       }
-      // Update lastUpdated only when events actually change
-      setLastUpdated(new Date());
+    };
+    fetchMetadata();
+
+    // Listen to metadata document for changes
+    const unsubscribe = onSnapshot(doc(db, 'metadata', 'lastUpdate'), (doc) => {
+      if (doc.exists()) {
+        const timestamp = doc.data().timestamp;
+        setLastUpdated(new Date(timestamp));
+      }
     }, (error) => {
-      console.log('Firebase listener error:', error);
+      console.log('Firebase metadata listener error:', error);
     });
 
     return () => unsubscribe();
-  }, [isInitialLoad]);
+  }, []);
+
+  // Handle responsive view switching
+  useEffect(() => {
+    const handleResize = () => {
+      // If screen is narrower than 768px, switch to list week view
+      // Otherwise use week view
+      if (window.innerWidth < 768) {
+        setView("listWeek");
+      } else {
+        setView("dayGridWeek");
+      }
+    };
+
+    // Call on mount
+    handleResize();
+
+    // Listen for window resize
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleSubmitEvent = () => {
     // Add logic for submitting an event
@@ -99,15 +134,35 @@ function App() {
     setView(newView);
   };
 
+  // Filter events based on selected filters
+  const filteredEvents = events.filter(event => {
+    // If no filters are selected, show all events
+    if (selectedFilters.eventType.length === 0 && selectedFilters.danceStyle.length === 0) {
+      return true;
+    }
+
+    // Check event type filter
+    const matchesEventType = selectedFilters.eventType.length === 0 || 
+      selectedFilters.eventType.includes(event.event_type);
+
+    // Check dance style filter
+    const matchesDanceStyle = selectedFilters.danceStyle.length === 0 || 
+      selectedFilters.danceStyle.includes(event.dance_style);
+
+    return matchesEventType && matchesDanceStyle;
+  });
+
   // This is the main render
   // For playing w color: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/named-color
   return (
     <div style={{ padding: "20px", backgroundColor: "#02008f", minHeight: "100vh", overflow: "hidden" }}>
       <Header onSubmitEvent={handleSubmitEvent} myCalendarId={MY_CALENDAR_ID} /> {/* Pass the calendar ID */}
 
-      <div style={{ backgroundColor: "white", padding: "20px", borderRadius: "8px", marginBottom: "20px", overflow: "hidden" }}>
-        <div style={{ width: "100%", overflow: "hidden" }}>
-          <Calendar events={events} view={view} onViewChange={handleViewChange} myCalendarId={MY_CALENDAR_ID} />
+      <Filter selectedFilters={selectedFilters} onFilterChange={setSelectedFilters} />
+
+      <div style={{ backgroundColor: "white", padding: "20px", borderRadius: "8px", marginBottom: "20px", overflow: view === "listWeek" ? "auto" : "hidden", maxHeight: view === "listWeek" ? "none" : "auto", height: view === "listWeek" ? "auto" : "auto" }}>
+        <div style={{ width: "100%", overflow: view === "listWeek" ? "auto" : "hidden" }}>
+          <Calendar events={filteredEvents} view={view} onViewChange={handleViewChange} myCalendarId={MY_CALENDAR_ID} />
         </div>
       </div>
 

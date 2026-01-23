@@ -66,6 +66,17 @@
   overflow: auto;
 }
 
+.fc-wrapper.listWeek .fc .fc-scroller {
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.fc-wrapper.listWeek .fc .fc-list-event-title {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
 .fc-wrapper.dayGridWeek .fc .fc-daygrid-day-top,
 .fc-wrapper.dayGridWeek .fc .fc-daygrid-day-events {
   border: none !important;

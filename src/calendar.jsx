@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
+import listPlugin from "@fullcalendar/list";
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
@@ -93,9 +94,13 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange, myCalendarId }) 
     <div className={`fc-wrapper ${view}`}>
       <FullCalendar
         ref={calendarRef}
-        plugins={[dayGridPlugin, timeGridPlugin]}
+        plugins={[dayGridPlugin, timeGridPlugin, listPlugin]}
         initialView={view}
-        headerToolbar={{
+        headerToolbar={view === "listWeek" ? {
+          left: "prev,next",
+          center: "title",
+          right: "",
+        } : {
           left: "prev,next today",
           center: "title",
           right: "dayGridWeek,dayGridMonth",
@@ -112,6 +117,10 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange, myCalendarId }) 
         showNonCurrentDates={false}
         views={{
           dayGridMonth: { fixedWeekCount: false, showNonCurrentDates: false },
+          listWeek: { 
+            buttonText: "Week",
+            titleFormat: { month: 'short', day: 'numeric' }
+          },
         }}
         datesSet={(dateInfo) => {
           if (onViewChange) onViewChange(dateInfo.view.type);
