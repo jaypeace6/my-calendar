@@ -39,15 +39,17 @@ function App() {
   const [events, setEvents] = useState([]);
   const [view, setView] = useState("dayGridWeek");
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const [selectedFilters, setSelectedFilters] = useState({
     eventType: [],
-    danceStyle: [],
+    danceStyles: [],
   });
   const isInitialLoadRef = useRef(true);
   const CALENDAR_ID = "en.usa#holiday@group.v.calendar.google.com";
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setIsLoadingEvents(true);
       try {
         const allEvents = [];
         for (const id of CALENDAR_IDS) {
@@ -65,7 +67,19 @@ function App() {
                 id: item.id,
               };
 
-              // Don't fetch Firestore here - do it on click instead
+              // Fetch Firebase data for filtering
+              try {
+                const firebaseQuery = query(collection(db, 'events'), where('google_calendar_id', '==', item.id));
+                const firebaseSnapshot = await getDocs(firebaseQuery);
+                if (!firebaseSnapshot.empty) {
+                  const firebaseData = firebaseSnapshot.docs[0].data();
+                  event.event_type = firebaseData.event_type || null;
+                  event.dance_styles = firebaseData.dance_styles || null;
+                }
+              } catch (err) {
+                // Silently continue if Firebase fetch fails for this event
+              }
+
               allEvents.push(event);
             }
           }
@@ -73,6 +87,8 @@ function App() {
         setEvents(allEvents);
       } catch (error) {
         console.error('Error fetching events:', error);
+      } finally {
+        setIsLoadingEvents(false);
       }
     };
 
@@ -137,7 +153,7 @@ function App() {
   // Filter events based on selected filters
   const filteredEvents = events.filter(event => {
     // If no filters are selected, show all events
-    if (selectedFilters.eventType.length === 0 && selectedFilters.danceStyle.length === 0) {
+    if (selectedFilters.eventType.length === 0 && selectedFilters.danceStyles.length === 0) {
       return true;
     }
 
@@ -146,10 +162,19 @@ function App() {
       selectedFilters.eventType.includes(event.event_type);
 
     // Check dance style filter
-    const matchesDanceStyle = selectedFilters.danceStyle.length === 0 || 
-      selectedFilters.danceStyle.includes(event.dance_style);
+    // Parse comma-separated dance_styles, convert to lowercase, trim whitespace
+    const eventDanceStyles = event.dance_styles
+      ? event.dance_styles
+          .split(',')
+          .map(style => style.trim().toLowerCase())
+      : [];
 
-    return matchesEventType && matchesDanceStyle;
+    const matchesDanceStyles = selectedFilters.danceStyles.length === 0 || 
+      selectedFilters.danceStyles.some(selectedStyle => 
+        eventDanceStyles.includes(selectedStyle.toLowerCase())
+      );
+
+    return matchesEventType && matchesDanceStyles;
   });
 
   // This is the main render
@@ -161,6 +186,12 @@ function App() {
       <Filter selectedFilters={selectedFilters} onFilterChange={setSelectedFilters} />
 
       <div style={{ backgroundColor: "white", padding: "20px", borderRadius: "8px", marginBottom: "20px", overflow: view === "listWeek" ? "auto" : "hidden", maxHeight: view === "listWeek" ? "none" : "auto", height: view === "listWeek" ? "auto" : "auto" }}>
+        {isLoadingEvents && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 0', color: '#555', fontFamily: 'Arial, sans-serif' }}>
+            <span className="loading-spinner" aria-hidden="true" />
+            <span>Loading events…</span>
+          </div>
+        )}
         <div style={{ width: "100%", overflow: view === "listWeek" ? "auto" : "hidden" }}>
           <Calendar events={filteredEvents} view={view} onViewChange={handleViewChange} myCalendarId={MY_CALENDAR_ID} />
         </div>

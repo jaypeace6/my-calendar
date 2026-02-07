@@ -223,6 +223,10 @@ const Calendar = ({ events, view = "dayGridWeek", onViewChange, myCalendarId }) 
                   {selectedEvent.organizer_data.website_link && (
                     <p><strong>Website:</strong> <a href={selectedEvent.organizer_data.website_link} target="_blank" rel="noopener noreferrer">{selectedEvent.organizer_data.website_link}</a></p>
                   )}
+
+                  {selectedEvent.safety_policy && (
+                <p><strong>Safety Policy:</strong> {selectedEvent.safety_policy}</p>
+              )}
                 </div>
               )}
             

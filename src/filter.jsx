@@ -10,10 +10,10 @@ export default function Filter({ selectedFilters, onFilterChange }) {
   };
 
   const handleDanceStyleChange = (style) => {
-    const updated = selectedFilters.danceStyle.includes(style)
-      ? selectedFilters.danceStyle.filter(s => s !== style)
-      : [...selectedFilters.danceStyle, style];
-    onFilterChange({ ...selectedFilters, danceStyle: updated });
+    const updated = selectedFilters.danceStyles.includes(style)
+      ? selectedFilters.danceStyles.filter(s => s !== style)
+      : [...selectedFilters.danceStyles, style];
+    onFilterChange({ ...selectedFilters, danceStyles: updated });
   };
 
   return (
@@ -50,7 +50,7 @@ export default function Filter({ selectedFilters, onFilterChange }) {
             <label key={style} style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
               <input
                 type="checkbox"
-                checked={selectedFilters.danceStyle.includes(style)}
+                checked={selectedFilters.danceStyles.includes(style)}
                 onChange={() => handleDanceStyleChange(style)}
               />
               <span style={{ textTransform: "capitalize" }}>{style}</span>
