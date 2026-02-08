@@ -5,7 +5,7 @@ import Header from "./header";
 import Calendar from "./calendar";
 import Filter from "./filter";
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, onSnapshot, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { getFirestore, collection, onSnapshot, doc, getDoc, getDocs } from 'firebase/firestore';
 
 const API_KEY = import.meta.env.VITE_GOOGLE_CALENDAR_API_KEY;
 
@@ -51,6 +51,20 @@ function App() {
     const fetchEvents = async () => {
       setIsLoadingEvents(true);
       try {
+        // Fetch all Firebase event metadata once, map by google_calendar_id
+        const firebaseEventsMap = new Map();
+        try {
+          const firebaseSnapshot = await getDocs(collection(db, 'events'));
+          firebaseSnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            if (data?.google_calendar_id) {
+              firebaseEventsMap.set(data.google_calendar_id, data);
+            }
+          });
+        } catch (err) {
+          // If Firebase fetch fails, continue with Google Calendar only
+        }
+
         const allEvents = [];
         for (const id of CALENDAR_IDS) {
           const response = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(id)}/events?key=${API_KEY}`);
@@ -67,17 +81,11 @@ function App() {
                 id: item.id,
               };
 
-              // Fetch Firebase data for filtering
-              try {
-                const firebaseQuery = query(collection(db, 'events'), where('google_calendar_id', '==', item.id));
-                const firebaseSnapshot = await getDocs(firebaseQuery);
-                if (!firebaseSnapshot.empty) {
-                  const firebaseData = firebaseSnapshot.docs[0].data();
-                  event.event_type = firebaseData.event_type || null;
-                  event.dance_styles = firebaseData.dance_styles || null;
-                }
-              } catch (err) {
-                // Silently continue if Firebase fetch fails for this event
+              // Attach Firebase data for filtering (if present)
+              const firebaseData = firebaseEventsMap.get(item.id);
+              if (firebaseData) {
+                event.event_type = firebaseData.event_type || null;
+                event.dance_styles = firebaseData.dance_styles || null;
               }
 
               allEvents.push(event);

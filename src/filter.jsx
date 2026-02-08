@@ -1,6 +1,11 @@
 export default function Filter({ selectedFilters, onFilterChange }) {
   const eventTypes = ['class', 'social', 'classAndSocial', 'other'];
   const danceStyles = ['salsa', 'bachata', 'zouk', 'kizomba', 'other'];
+  const hasFilters = selectedFilters.eventType.length > 0 || selectedFilters.danceStyles.length > 0;
+
+  const handleResetFilters = () => {
+    onFilterChange({ eventType: [], danceStyles: [] });
+  };
 
   const handleEventTypeChange = (type) => {
     const updated = selectedFilters.eventType.includes(type)
@@ -17,15 +22,25 @@ export default function Filter({ selectedFilters, onFilterChange }) {
   };
 
   return (
-    <div style={{ 
+    <div className="filters-card" style={{ 
       backgroundColor: "white", 
       padding: "20px", 
       borderRadius: "8px", 
       marginBottom: "20px" 
     }}>
-      <h3 style={{ marginTop: 0, marginBottom: "15px" }}>Filters</h3>
+      <div className="filters-header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px", flexWrap: "wrap" }}>
+        <h3 style={{ marginTop: 0, marginBottom: 0 }}>Filters</h3>
+        <button
+          type="button"
+          className="filters-reset"
+          onClick={handleResetFilters}
+          disabled={!hasFilters}
+        >
+          Reset filters
+        </button>
+      </div>
 
-      <div style={{ marginBottom: "20px" }}>
+      <div style={{ marginBottom: "20px", marginTop: "15px" }}>
         <h4 style={{ marginTop: 0, marginBottom: "10px" }}>Event Type</h4>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
           {eventTypes.map(type => (

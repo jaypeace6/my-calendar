@@ -138,3 +138,34 @@
 @keyframes spinner-spin {
   to { transform: rotate(360deg); }
 }
+
+.filters-reset {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.filters-reset:hover:not(:disabled) {
+  background: #0069d9;
+}
+
+.filters-reset:disabled {
+  background: #b8c4d6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .filters-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters-reset {
+    width: 100%;
+  }
+}
