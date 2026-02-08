@@ -210,7 +210,7 @@ function App() {
         <p>We're a community of passionate dancers, updating the calendar every week with all the deets you need to find public classes, socials, and other events across the St. Louis Afro‑Latin dance scene. Check out what's happening and be part of the rhythm!</p>
 
         <p>To learn more or request to add your event, explore our subpages.</p>
-        <p>Est. 2026</p>
+        <p>Est. 2026    |    Version: Beta</p>
         {lastUpdated && (
           <p style={{ fontSize: '12px', color: '#999', marginTop: '10px' }}>
             Last updated: {lastUpdated.toLocaleString()}
